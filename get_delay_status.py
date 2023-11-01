@@ -24,7 +24,7 @@ def update_status(status, line, stations, delay):
     elif delay == "Line suspended":
         status = f"{line.capitalize()} line suspended. Find an alternative route."
     else:
-        status = f"{delay} on parts of {line} line. Your route may be affected."
+        status = f"{delay} on parts of {line} line. Your route is not mentioned but may be affected."
     return status
 
 
@@ -38,7 +38,19 @@ def update_status_suspended(status, line, stations, delay):
             + f" {delay} on rest of line."
         )
     else:
-        status = f"{line.capitalize()} line is part suspended. {delay} on rest of line. Your route may be affected."
+        status = f"{line.capitalize()} line is part suspended. {delay} on rest of line. Your route is not mentioned but may be affected."
+    return status
+
+
+def update_status_closure(status, line, stations, delay):
+    if any(station in status for station in stations):
+        status = re.split("no service", status)[1]
+        status = (
+            f"{line.capitalize()} line is part closed. "
+            + status.split("Use")[0].strip()
+        )
+    else:
+        status = f"{line.capitalize()} line is part closed. Your route is not mentioned but may be affected."
     return status
 
 
@@ -46,13 +58,16 @@ def parse_status(status, line, stations):
     if "Part suspended" in status:
         if "GOOD SERVICE" in status:
             delay = "Good service"
-            parsed_status = update_status(status, line, stations, delay)
+            parsed_status = update_status_suspended(status, line, stations, delay)
         elif "MINOR DELAYS" in status:
             delay = "Minor delays"
             parsed_status = update_status_suspended(status, line, stations, delay)
         elif "SEVERE DELAYS" in status:
             delay = "Severe delays"
             parsed_status = update_status_suspended(status, line, stations, delay)
+    elif "Part closure" in status:
+        delay = "Part closure"
+        parsed_status = update_status_closure(status, line, stations, delay)
     elif "Severe delays" in status:
         delay = "Severe delays"
         parsed_status = update_status(status, line, stations, delay)
@@ -62,8 +77,9 @@ def parse_status(status, line, stations):
     elif "Good service" in status:
         parsed_status = f"Good service on whole {line} line."
     else:
-        delay = "Line suspended"
-        parsed_status = update_status(status, line, stations, delay)
+        parsed_status = (
+            "Status not recognised. Please visit the TfL website for more information."
+        )
 
     return parsed_status
 
