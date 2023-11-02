@@ -43,6 +43,7 @@ station_codes = {}
 
 
 for line in tube_lines:
+    print(line)
     branches_dict = {}
 
     res = requests.get(f"https://api.tfl.gov.uk/line/{line}/route/sequence/outbound")
