@@ -4,14 +4,6 @@ import json
 import requests
 
 
-# for line in tube_lines:
-#    res = requests.get("https://api.tfl.gov.uk/line/piccadilly/route/sequence/outbound")
-#
-#    x = res.json()
-#
-#    for route in x["orderedLineRoutes"]:
-
-
 lines = {
     "tube": [
         "bakerloo",
