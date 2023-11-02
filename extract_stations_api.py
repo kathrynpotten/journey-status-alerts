@@ -47,25 +47,33 @@ tube_lines = [
 ]
 
 station_dict = {}
-branhces_dict = {}
+station_codes = {}
 
-"""
+
 for line in tube_lines:
+    branches_dict = {}
 
     res = requests.get(f"https://api.tfl.gov.uk/line/{line}/route/sequence/outbound")
 
     x = res.json()
 
     for route in x["orderedLineRoutes"]:
-        branhces_dict[route["name"]] = route["naptanIds"]
-"""
+        name = route["name"].replace("&harr;", "↔")
+        branches_dict[name] = route["naptanIds"]
 
-res = requests.get(f"https://api.tfl.gov.uk/line/piccadilly/route/sequence/outbound")
+    for station in x["stations"]:
+        if station["stopType"] == "NaptanMetroStation":
+            name = station["name"].split(" Underground Station")[0]
+            station_codes[station["stationId"]] = name
 
-x = res.json()
+    for branch, stations in branches_dict.items():
+        for station in stations:
+            index = stations.index(station)
+            if station in station_codes.keys():
+                stations[index] = station_codes[station]
 
-for route in x["orderedLineRoutes"]:
-    name = route["name"].replace("&harr;", "↔")
-    branhces_dict[name] = route["naptanIds"]
+    station_dict[line] = branches_dict
 
-print(branhces_dict)
+
+with open("stations.txt", "w+", encoding="utf-8") as file:
+    file.write(json.dumps(station_dict))
