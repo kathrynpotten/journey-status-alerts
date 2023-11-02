@@ -21,8 +21,6 @@ def update_status(status, line, stations, delay):
         )
     elif "GOOD SERVICE" in status:
         status = f"{delay} on parts of {line} line. Your route has good service."
-    elif delay == "Line suspended":
-        status = f"{line.capitalize()} line suspended. Find an alternative route."
     else:
         status = f"{delay} on parts of {line} line. Your route is not mentioned but may be affected."
     return status
@@ -55,7 +53,11 @@ def update_status_closure(status, line, stations, delay):
 
 
 def parse_status(status, line, stations):
-    if "Part suspended" in status:
+    if "Closed" in status:
+        parsed_status = f"{line} closed. Please find alternative route."
+    elif "Suspended" in status:
+        parsed_status = f"{line} suspended. Please find an alternative route."
+    elif "Part suspended" in status:
         if "GOOD SERVICE" in status:
             delay = "Good service"
             parsed_status = update_status_suspended(status, line, stations, delay)
@@ -70,6 +72,9 @@ def parse_status(status, line, stations):
         parsed_status = update_status_closure(status, line, stations, delay)
     elif "Severe delays" in status:
         delay = "Severe delays"
+        parsed_status = update_status(status, line, stations, delay)
+    elif "Reduced service" in status:
+        delay = "Reduced service"
         parsed_status = update_status(status, line, stations, delay)
     elif "Minor delays" in status:
         delay = "Minor delays"
