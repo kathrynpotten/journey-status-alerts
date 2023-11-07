@@ -40,8 +40,9 @@ tube_lines = [
 
 station_dict = {}
 station_codes = {}
+ics_codes = {}
 
-"""
+
 for line in tube_lines:
     print(line)
     branches_dict = {}
@@ -52,7 +53,6 @@ for line in tube_lines:
     code_res = requests.get(f"https://api.tfl.gov.uk/line/{line}/stoppoints")
     y = code_res.json()
 
-
     for route in x["orderedLineRoutes"]:
         name = route["name"].replace("&harr;", "↔")
         branches_dict[name] = route["naptanIds"]
@@ -61,10 +61,12 @@ for line in tube_lines:
         name = station["name"].split(" Underground Station")[0]
         if station["stopType"] == "NaptanMetroStation":
             station_codes[station["stationId"]] = name
+            ics_codes[name] = station["icsId"]
         else:
+            ics_codes[name] = station["icsId"]
             for i in range(len(y)):
-                if y[i]["commonName] == name+ " Underground Station"
-                station_codes[y[i]["id"]] = name
+                if y[i]["commonName"] == name + " Underground Station":
+                    station_codes[y[i]["id"]] = name
 
     for branch, stations in branches_dict.items():
         for station in stations:
@@ -74,16 +76,8 @@ for line in tube_lines:
 
     station_dict[line] = branches_dict
 
-"""
-# with open("stations.txt", "w+", encoding="utf-8") as file:
-#    file.write(json.dumps(station_dict))
 
-
-code_res = requests.get(f"https://api.tfl.gov.uk/line/bakerloo/stoppoints")
-y = code_res.json()
-
-name = "Baker Street"
-for i in range(len(y)):
-    print(y[i]["commonName"])
-    if y[i]["commonName"] == name + " Underground Station":
-        print(i, y[i]["id"])
+with open("stations.txt", "w+", encoding="utf-8") as file:
+    file.write(json.dumps(station_dict))
+    file.write("\n\n")
+    file.write(json.dumps(ics_codes))
