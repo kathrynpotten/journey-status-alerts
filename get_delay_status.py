@@ -27,9 +27,9 @@ def update_status(status, line, stations, delay):
 
 
 def update_status_suspended(status, line, stations, delay):
+    status = status.split(f"{line.capitalize()} Line:")[1]
     if any(station in status for station in stations):
         status = re.split(" (MINOR|SEVERE) DELAYS", status)[0]
-        status = status.split(f"{line.capitalize()} Line:")[1]
         status = (
             f"{line.capitalize()} line is part suspended. "
             + status.split(f"{delay}")[-1].strip()
@@ -42,7 +42,7 @@ def update_status_suspended(status, line, stations, delay):
 
 def update_status_closure(status, line, stations, delay):
     if any(station in status for station in stations):
-        status = re.split("no service", status)[1]
+        status = re.split("No service", status)[1]
         status = (
             f"{line.capitalize()} line is part closed. "
             + status.split("Use")[0].strip()
