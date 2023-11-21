@@ -1,3 +1,8 @@
+""" Script to find delay status of a route on London Underground, given a tube line, 
+departure and destination stations. 
+
+Requires function get_status from get_delay_status module. """
+
 import get_delay_status
 import ast
 import sys

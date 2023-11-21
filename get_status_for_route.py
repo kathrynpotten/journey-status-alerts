@@ -1,8 +1,11 @@
-import get_delay_status
+""" Script to get delay status for a route on the Lonodn Underground given only departure and destination stations.
+
+Uses the TfL API to find suggested route. """
+
+
 import get_status_for_line
 import ast
 import sys
-import json
 import requests
 
 departure = sys.argv[1]

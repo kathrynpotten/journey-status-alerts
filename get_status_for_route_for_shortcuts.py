@@ -1,8 +1,12 @@
-import get_delay_status
+""" Script to get delay status for a route on the Lonodn Underground given only departure and destination stations.
+
+Uses the TfL API to find suggested route. 
+
+This module is the same as get_status_for_route, but writes to a file for use with Apple Shortcuts. """
+
 import get_status_for_line
 import ast
 import sys
-import json
 import requests
 
 f = open("status.txt", "w+")

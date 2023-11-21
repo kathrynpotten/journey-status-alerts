@@ -1,3 +1,7 @@
+""" Script to find delay status of given route on the London Underground (tube line and stations on route). 
+
+Status is scraped from TfL website and parsed for ease of understanding. """
+
 import requests
 import bs4
 import re
