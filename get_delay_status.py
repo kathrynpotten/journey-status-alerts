@@ -101,3 +101,28 @@ def get_status(line, stations):
     status = line_service_status(soup, line)
     parsed_status = parse_status(status, line, stations)
     return parsed_status
+
+
+def get_status_commute(line, stations, soup):
+    status = line_service_status(soup, line)
+    parsed_status = parse_status(status, line, stations)
+    return parsed_status
+
+
+def commute(**kwargs):
+    res = requests.get("https://tfl.gov.uk/tube-dlr-overground/status/")
+    soup = bs4.BeautifulSoup(res.text, "lxml")
+    status_list = []
+    for stations, line in kwargs.items():
+        status_list.append(get_status_commute(line, stations, soup))
+    updated_status_list = [
+        status for status in status_list if "Good service on whole" not in status
+    ]
+    if not updated_status_list:
+        route_delay_status = "Good service on all lines."
+    else:
+        route_delay_status = "\n".join(updated_status_list)
+
+        if len(updated_status_list) != len(status_list):
+            route_delay_status += "\nGood service on all other lines"
+    return route_delay_status
